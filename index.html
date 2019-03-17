@@ -12,7 +12,7 @@
     ></script>
     <style>
       table {
-          margin-bottom: 20px;
+        margin-bottom: 20px;
       }
       td {
         border: 1px solid #627295;
@@ -27,7 +27,7 @@
         box-sizing: border-box;
       }
       td.used {
-          background-color: rgba(172, 172, 172,0.3);
+        background-color: rgba(172, 172, 172, 0.3);
       }
       .btn-square {
         display: inline-block;
@@ -69,7 +69,9 @@
     <h2>ルール</h2>
     <h3>自分の手番でやること</h3>
     <ol>
-      <li>選択された欄の上下左右で熟語を構成する漢字を回答</li>
+      <li>
+        選択された欄の上下左右で熟語を構成する漢字を回答(初手は自由な漢字を選択)
+      </li>
       <li>[次の回答者が回答するべき欄]を選択</li>
     </ol>
     <h3>勝利条件</h3>
@@ -80,7 +82,9 @@
     <table></table>
     <a id="input_done" class="btn-square">入力完了</a>
     <a id="compute_button" class="btn-square">コンピューターに入力させる</a>
-    <a id="compute_select" style="display:none" class="btn-square">コンピューターに選択させる</a>
+    <a id="compute_select" style="display:none" class="btn-square"
+      >コンピューターに選択させる</a
+    >
 
     <script>
       var data_1_2;
@@ -97,7 +101,7 @@
         exist = data;
       });
       var m = 8;
-      if(getParam("size")){
+      if (getParam("size")) {
         m = parseInt(getParam("size"));
       }
 
@@ -128,19 +132,22 @@
       });
 
       function getParam(name, url) {
-          if (!url) url = window.location.href;
-          name = name.replace(/[\[\]]/g, "\\$&");
-          var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-              results = regex.exec(url);
-          if (!results) return null;
-          if (!results[2]) return '';
-          return decodeURIComponent(results[2].replace(/\+/g, " "));
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return "";
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
       }
 
-      function now_split(str){
-        return str.replace("#","").split("_").map(function(v){
-          return parseInt(v);
-        });
+      function now_split(str) {
+        return str
+          .replace("#", "")
+          .split("_")
+          .map(function(v) {
+            return parseInt(v);
+          });
       }
 
       function change(value) {
@@ -174,10 +181,7 @@
                     back = $("#" + tmp_h + "_" + tmp_w).text();
                     front = $(now).text();
                   }
-                  if (
-                    !exist[front + back] ||
-                    used[$(now).text()]
-                  ) {
+                  if (!exist[front + back] || used[$(now).text()]) {
                     console.log([front, back]);
                     ok = false;
                   }
@@ -226,7 +230,7 @@
         select(this);
       });
 
-      function select(target){
+      function select(target) {
         $("td").removeClass("selected");
         $(target).addClass("selected");
         now = "#" + $(target).attr("id");
@@ -279,7 +283,7 @@
           // alert("存在しません");
           return null;
         }
-        if(list.length == 0){
+        if (list.length == 0) {
           return null;
         }
         list.forEach(koho => {
@@ -338,47 +342,52 @@
       function compute_select() {
         var choice = {};
 
-        $('td.used').each(function(index,element){
-            var h = now_split($(element).attr("id"))[0];
-            var w = now_split($(element).attr("id"))[1];
-            var tmp_h,tmp_w;
-            console.log([h,w]);
-            [-1, 1].forEach(e1 => {
-                [false, true].forEach(e2 => {
-                    tmp_h = h;
-                    tmp_w = w;
-                    
-                    if (e2) {
-                        tmp_h += e1;
-                    } else {
-                        tmp_w += e1;
-                    }
+        $("td.used").each(function(index, element) {
+          var h = now_split($(element).attr("id"))[0];
+          var w = now_split($(element).attr("id"))[1];
+          var tmp_h, tmp_w;
+          console.log([h, w]);
+          [-1, 1].forEach(e1 => {
+            [false, true].forEach(e2 => {
+              tmp_h = h;
+              tmp_w = w;
 
-                    // console.log(choice);
-                    // console.log([tmp_h,tmp_w]);
+              if (e2) {
+                tmp_h += e1;
+              } else {
+                tmp_w += e1;
+              }
 
-                    if (0 <= tmp_h && tmp_h < n && 0 <= tmp_w && tmp_w < n && $("#" + tmp_h + "_" + tmp_w).text()=="") {
-                        
-                        var res = compute("#" + tmp_h + "_" + tmp_w);
-                        if(res && !used[res]){
-                            choice["#" + tmp_h + "_" + tmp_w] = true;
-                        }
-                    }
-                });
+              // console.log(choice);
+              // console.log([tmp_h,tmp_w]);
+
+              if (
+                0 <= tmp_h &&
+                tmp_h < n &&
+                0 <= tmp_w &&
+                tmp_w < n &&
+                $("#" + tmp_h + "_" + tmp_w).text() == ""
+              ) {
+                var res = compute("#" + tmp_h + "_" + tmp_w);
+                if (res && !used[res]) {
+                  choice["#" + tmp_h + "_" + tmp_w] = true;
+                }
+              }
             });
-        })
+          });
+        });
 
         var keys = Object.keys(choice);
         var key = keys[(keys.length * Math.random()) << 0];
         // からやけど周りにあるやつ__
         console.log(key);
-        if(!!key){
+        if (!!key) {
           select(key);
           change();
-        }else{
-          alert('詰みです');
+        } else {
+          alert("詰みです");
         }
-        
+
         // compute
       }
     </script>
