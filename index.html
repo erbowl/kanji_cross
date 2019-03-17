@@ -16,8 +16,10 @@
       }
       td {
         border: 1px solid #627295;
-        height: 30px;
-        width: 30px;
+        height: 40px;
+        width: 40px;
+        font-size: 20px;
+        vertical-align: middle;
         text-align: center;
         font-family: “游明朝”, YuMincho, “ヒラギノ明朝 ProN W3”,
           “Hiragino Mincho ProN”, “ＭＳ Ｐ明朝”, “ＭＳ 明朝”, serif;
@@ -25,6 +27,7 @@
         -webkit-transform: rotate(0.03deg);
         border-radius: 3%;
         box-sizing: border-box;
+        font-weight: bold;
       }
       td.used {
         background-color: rgba(172, 172, 172, 0.3);
@@ -100,7 +103,7 @@
       $.getJSON("json/exist.json", function(data) {
         exist = data;
       });
-      var m = 8;
+      var m = 5;
       if (getParam("size")) {
         m = parseInt(getParam("size"));
       }
