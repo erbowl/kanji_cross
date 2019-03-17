@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>漢字クロスゲーム</title>
+    <!-- <script src="html2canvas.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>    
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta1/html2canvas.min.js"></script> -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.min.js"
       integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -13,6 +16,7 @@
     <style>
       table {
         margin-bottom: 20px;
+        background-color: #fff;
       }
       td {
         border: 1px solid #627295;
@@ -62,6 +66,27 @@
         border-top: solid 3px #364e96; /*上線*/
         border-bottom: solid 3px #364e96; /*下線*/
       }
+      .box6 {
+          padding: 0.5em 1em;
+          margin: 2em 0;
+          background: #f0f7ff;
+          border: dashed 2px #5b8bd0;/*点線*/
+      }
+      .box6 p {
+          margin: 0; 
+          padding: 0;
+      }
+      .box8 {
+          padding: 0.5em 1em;
+          margin: 2em 0;
+          color: #232323;
+          background: #fff8e8;
+          border-left: solid 10px #ffc06e;
+      }
+      .box8 p {
+          margin: 0; 
+          padding: 0;
+      }
     </style>
   </head>
   <body>
@@ -73,30 +98,40 @@
     <a href="/?size=12">特大</a>
     <a href="/?size=24">超特大</a>
     <h2>ルール</h2>
+
     <h3>自分の手番でやること</h3>
-    <ol>
-      <li>
-        選択された欄の上下左右で熟語を構成する漢字を回答(初手は自由な漢字を選択)
-      </li>
-      <li>[次の回答者が回答するべき欄]を選択</li>
-    </ol>
+    <div class="box6">
+        <ol>
+            <li>
+              選択された欄の上下左右で熟語を構成する漢字を回答(初手は自由な漢字を選択)
+            </li>
+            <li>[次の回答者が回答するべき欄]を選択</li>
+          </ol>
+    </div>
+    
     <h3>勝利条件</h3>
-    <ul>
-      <li>相手が回答が存在しない欄を選択してくること</li>
-      <li>回答が存在するが、相手が答えられない空欄を選択すること</li>
-    </ul>
-    <table></table>
+    <div class="box8">
+        <ul>
+            <li>相手が回答が存在しない欄を選択してくること</li>
+            <li>回答が存在するが、相手が答えられない空欄を選択すること</li>
+          </ul>
+    </div>
+   
+    <table id="table"></table>
     <a  href="javascript:void(0);"id="input_done" class="btn-square" tabindex="1002" >入力完了</a>
     <a  href="javascript:void(0);"id="compute_button" class="btn-square" tabindex="1003">コンピューターに入力させる</a>
     <a  href="javascript:void(0);"id="compute_select" style="display:none" class="btn-square" tabindex="1004"
       >コンピューターに選択させる</a
     >
-
-    <script>
+    <a id="save" class="btn-square" tabindex="1006"
+      >画像を保存</a
+    >
+    <script>      
       var data_1_2;
       var data_2_1;
       var exist;
       var used = {};
+      imageUpdate();
       $.getJSON("json/1_2.json", function(data) {
         data_1_2 = data;
       });
@@ -242,6 +277,9 @@
           input_time = !input_time;
           $("#compute_button").hide();
           $("#compute_select").show();
+
+          // 画像化用
+          imageUpdate();
         } else {
           $("#input_done").text("入力完了");
 
@@ -263,6 +301,23 @@
         }
         select(this);
       });
+
+      function imageUpdate(){
+        // 画像化用
+        scrollPos = $(window).scrollTop();
+        console.log(scrollPos);
+        html2canvas(document.getElementById('table'), {
+            onrendered: function(canvas) {
+              console.log(scrollPos);
+              window.scrollTo(0,scrollPos);
+
+              $downloadLink = $('#save');
+              $downloadLink.attr("href",canvas.toDataURL('image/png'));
+              $downloadLink.attr("download","kanji_cross.png");
+            },
+            scale:2
+        });
+      }
 
       function select(target) {
         if( $(target).hasClass("used") ){
