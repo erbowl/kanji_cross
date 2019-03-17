@@ -29,6 +29,9 @@
         box-sizing: border-box;
         font-weight: bold;
       }
+      td.select_ok {
+        background-color: yellow;
+      }
       td.used {
         background-color: rgba(172, 172, 172, 0.3);
       }
@@ -83,9 +86,9 @@
       <li>回答が存在するが、相手が答えられない空欄を選択すること</li>
     </ul>
     <table></table>
-    <a id="input_done" class="btn-square" tabindex="2" >入力完了</a>
-    <a id="compute_button" class="btn-square" tabindex="3">コンピューターに入力させる</a>
-    <a id="compute_select" style="display:none" class="btn-square" tabindex="4"
+    <a  href="javascript:void(0);"id="input_done" class="btn-square" tabindex="1002" >入力完了</a>
+    <a  href="javascript:void(0);"id="compute_button" class="btn-square" tabindex="1003">コンピューターに入力させる</a>
+    <a  href="javascript:void(0);"id="compute_select" style="display:none" class="btn-square" tabindex="1004"
       >コンピューターに選択させる</a
     >
 
@@ -103,7 +106,7 @@
       $.getJSON("json/exist.json", function(data) {
         exist = data;
       });
-      var m = 5;
+      var m = 3;
       if (getParam("size")) {
         m = parseInt(getParam("size"));
       }
@@ -121,7 +124,8 @@
       $(now)
         .addClass("selected")
         .attr("contentEditable", "true")
-        .attr("tabindex", 1);
+        .attr("tabindex", 1)
+        .focus();
 
       $("#compute_button").on("click", function() {
         change(compute(now));
@@ -200,7 +204,9 @@
             $(now).addClass("used");
           } else {
             alert("存在しません/だめです");
-            $("#" + h + "_" + w).text("");
+            $(now).text("");
+            $(now).focus();
+            return ;
           }
 
           // 選択できないものを列挙
@@ -211,18 +217,46 @@
           // }
 
           // 次は選択中
+          $("td").attr("contentEditable", "false").removeAttr("tabindex");
+
+          // 選択できるものを
+          $("td.used").each(function(inin,element){
+            var id = $(element).attr("id");
+            var h = now_split(id)[0];
+            var w = now_split(id)[1];
+            $.each([-1, 1], function(index, v1) {
+              $.each([-1, 1], function(index2, v2) {
+                var tmp_h, tmp_w;
+                if (v2 == -1) {
+                  tmp_h = h + v1;
+                  tmp_w = w;
+                } else {
+                  tmp_h = h;
+                  tmp_w = w + v1;
+                }
+                if (!(tmp_h < 0 || tmp_h >= n || tmp_w < 0 || tmp_w >= n)) {
+                  if ( !$("#" + tmp_h + "_" + tmp_w).hasClass("used") ) {
+                    $("#" + tmp_h + "_" + tmp_w).addClass("select_ok");
+                  }
+                }
+              });
+            });
+          })
+          $("td.select_ok:not(.used)").attr("tabindex",1);
+
           $("#input_done").text("選択完了");
-          $("td")
-            .removeClass("selected")
-            .attr("contentEditable", "false");
+          
           input_time = !input_time;
           $("#compute_button").hide();
           $("#compute_select").show();
         } else {
           $("#input_done").text("入力完了");
+
+          $("td").removeAttr("tabindex");
           $(now)
             .attr("contentEditable", "true")
-            .attr("tabindex", 1);
+            .attr("tabindex", 1)
+            .focus();
           console.log(now);
           input_time = !input_time;
           $("#compute_button").show();
@@ -230,7 +264,7 @@
         }
       }
 
-      $("td").on("click", function() {
+      $("td").on("click focus", function() {
         if (input_time) {
           return 0;
         }
@@ -239,6 +273,9 @@
 
       function select(target) {
         if( $(target).hasClass("used") ){
+          return;
+        }
+        if( !$(target).hasClass("select_ok") ){
           return;
         }
         $("td").removeClass("selected");
