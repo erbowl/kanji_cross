@@ -80,9 +80,9 @@
       <li>回答が存在するが、相手が答えられない空欄を選択すること</li>
     </ul>
     <table></table>
-    <a id="input_done" class="btn-square">入力完了</a>
-    <a id="compute_button" class="btn-square">コンピューターに入力させる</a>
-    <a id="compute_select" style="display:none" class="btn-square"
+    <a id="input_done" class="btn-square" tabindex="2" >入力完了</a>
+    <a id="compute_button" class="btn-square" tabindex="3">コンピューターに入力させる</a>
+    <a id="compute_select" style="display:none" class="btn-square" tabindex="4"
       >コンピューターに選択させる</a
     >
 
@@ -117,7 +117,8 @@
       var now = "#" + m + "_" + m;
       $(now)
         .addClass("selected")
-        .attr("contentEditable", "true");
+        .attr("contentEditable", "true")
+        .attr("tabindex", 1);
 
       $("#compute_button").on("click", function() {
         change(compute(now));
@@ -216,7 +217,9 @@
           $("#compute_select").show();
         } else {
           $("#input_done").text("入力完了");
-          $(now).attr("contentEditable", "true");
+          $(now)
+            .attr("contentEditable", "true")
+            .attr("tabindex", 1);
           console.log(now);
           input_time = !input_time;
           $("#compute_button").show();
@@ -232,6 +235,9 @@
       });
 
       function select(target) {
+        if( $(target).hasClass("used") ){
+          return;
+        }
         $("td").removeClass("selected");
         $(target).addClass("selected");
         now = "#" + $(target).attr("id");
