@@ -151,13 +151,14 @@
       }
 
       function change(value) {
-        $(now).text(value);
         if (input_time) {
           var h = now_split(now)[0];
           var w = now_split(now)[1];
-          // if ( $('#'+h+'_'+w).text().length !=1 ){
-          //     alert("漢字1文字を入力すること");
-          // }
+          if (value.length != 1 || !/[\u3400-\u9FFF]/.test(value)) {
+            alert("漢字1文字を入力すること");
+            return;
+          }
+          $(now).text(value);
           // 可能か判定
           var ok = true;
           $.each([-1, 1], function(index, v1) {
