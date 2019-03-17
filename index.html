@@ -30,7 +30,7 @@
         font-weight: bold;
       }
       td.select_ok {
-        background-color: yellow;
+        background-color: rgba(233, 255, 136, 0.3);
       }
       td.used {
         background-color: rgba(172, 172, 172, 0.3);
@@ -208,13 +208,6 @@
             $(now).focus();
             return ;
           }
-
-          // 選択できないものを列挙
-          // for (let index = 0; index < n; index++) {
-          //     for (let jndex = 0; jndex < n; jndex++) {
-          //         $('#'+ index+'_'+jndex)
-          //     }
-          // }
 
           // 次は選択中
           $("td").attr("contentEditable", "false").removeAttr("tabindex");
