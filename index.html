@@ -197,6 +197,11 @@
         if (input_time) {
           var h = now_split(now)[0];
           var w = now_split(now)[1];
+          // computer側が答えがないときだけnullが来る
+          if(value === null){
+            alert('該当する漢字がありません');
+            return;
+          }
           if (value.length != 1 || !/[\u3400-\u9FFF]/.test(value)) {
             alert("漢字1文字を入力すること");
             return;
@@ -424,12 +429,9 @@
         if (result_kanji.length > 0) {
           var ans =
             result_kanji[Math.floor(Math.random() * result_kanji.length)];
-          // $(now).text(ans);
-          // change(ans);
           return ans;
         } else {
-          // change();
-          // alert('存在しません');
+          // alert('答えは存在しません');
           return null;
         }
       }
